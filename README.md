@@ -1,7 +1,7 @@
 # proyecto-programaci-n
 Objetivo: Desarrollar un sistema que analice datos históricos relacionados con precipitaciones y condiciones climáticas para identificar patrones y realizar predicciones sobre la ocurrencia de derrumbes en una zona crítica (Kilómetro 34 de la carretera Villa de Álvarez-Minatitlán).
 
-# Título del Proyecto
+# MODELO ARIMA DEL KM 34 CARRETERA VILLA DE ÁLVAREZ-MINTAITLÁN
 **Autores:** Alondra Alonzo Peña, Honelia Alejandra Venegas Figueroa 
 
 ## Introducción
@@ -31,6 +31,95 @@ Precipitaciones (mm): Datos diarios de lluvias con estacionalidad anual y ruido 
 Temperatura (°C): Variable secundaria para enriquecer el análisis.
 Derrumbes (binaria): Variable generada con base en la probabilidad de ocurrencia, directamente influenciada por las precipitaciones.
 Los datos fueron generados utilizando funciones estadísticas y se guardaron en formato CSV.
+
+## Código
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.arima.model import ARIMA
+from scipy.stats import describe
+
+Simulación de datos climáticos (precipitaciones y derrumbes)
+np.random.seed(42)
+fecha = pd.date_range(start="2023-01-01", end="2024-01-01", freq="D")  # Fechas ajustadas
+dias = len(fecha)
+
+Generar precipitaciones simuladas con estacionalidad y ruido
+precipitaciones = np.clip(
+    20 * (np.sin(2 * np.pi * (fecha.dayofyear / 365.25)) + 1) +  # Estacionalidad
+    np.random.normal(0, 5, dias),  # Ruido
+    a_min=0, a_max=None  # Precipitaciones no negativas
+)
+
+Simular probabilidad de derrumbes basada en precipitaciones
+derrumbes = (precipitaciones > 25).astype(int)
+
+Crear DataFrame
+datos = pd.DataFrame({
+    "Fecha": fecha,
+    "Precipitaciones_mm": precipitaciones,
+    "Derrumbe": derrumbes
+})
+datos.set_index("Fecha", inplace=True)
+
+Estadística descriptiva
+print("Estadística Descriptiva de las Precipitaciones:")
+print(describe(datos["Precipitaciones_mm"]))
+
+Visualización inicial de datos
+plt.figure(figsize=(12, 6))
+plt.plot(datos.index, datos["Precipitaciones_mm"], label="Precipitaciones (mm)")
+plt.title("Serie Temporal de Precipitaciones (2023)")
+plt.xlabel("Fecha")
+plt.ylabel("Precipitaciones (mm)")
+plt.legend()
+plt.grid()
+plt.show()
+
+Descomposición de la serie temporal
+descomposicion = seasonal_decompose(datos["Precipitaciones_mm"], model="additive", period=30)
+descomposicion.plot()
+plt.suptitle("Descomposición de la Serie Temporal (2023)")
+plt.show()
+
+Ajuste del modelo ARIMA para predicciones
+modelo = ARIMA(datos["Precipitaciones_mm"], order=(2, 1, 2))
+ajuste = modelo.fit()
+
+Predicciones a futuro (365 días)
+predicciones = ajuste.forecast(steps=30)
+
+Visualización de predicciones
+plt.figure(figsize=(12, 6))
+plt.plot(datos["Precipitaciones_mm"], label="Datos Históricos")
+plt.plot(predicciones.index, predicciones, label="Predicción", color="red")
+plt.title("Predicción de Precipitaciones (2024)")
+plt.xlabel("Fecha")
+plt.ylabel("Precipitaciones (mm)")
+plt.legend()
+plt.grid()
+plt.show()
+
+Resumen del modelo ARIMA
+print("Resumen del Modelo ARIMA:")
+print(ajuste.summary())
+
+Análisis de derrumbes
+print("\nResumen de Derrumbes:")
+print(datos["Derrumbe"].value_counts())
+print("Días con derrumbes:", datos["Derrumbe"].sum())
+
+Visualización de derrumbes
+plt.figure(figsize=(12, 6))
+plt.scatter(datos.index, datos["Derrumbe"], color="red", alpha=0.5, label="Eventos de Derrumbe")
+plt.plot(datos.index, datos["Precipitaciones_mm"], label="Precipitaciones (mm)", alpha=0.7)
+plt.title("Relación entre Derrumbes y Precipitaciones (2023)")
+plt.xlabel("Fecha")
+plt.ylabel("Precipitaciones (mm)")
+plt.legend()
+plt.grid()
+plt.show()
 
 ## Resultados
 Gráficos:
