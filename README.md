@@ -121,6 +121,107 @@ plt.legend()
 plt.grid()
 plt.show()
 
+#CODIGO MODIFICADO 
+import geopandas as gpd
+import folium
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Coordenadas del kilómetro 34 (en grados decimales)
+latitude = 19.390805  # 19°23'26.9"N
+longitude = -103.95575  # 103°57'20.7"W
+
+# Simulación de datos para el derrumbe
+def simulate_terrain(lat, lon, buffer=0.01):
+    """
+    Simula un terreno antes y después de un derrumbe basado en un área rectangular.
+    :param lat: Latitud del centro.
+    :param lon: Longitud del centro.
+    :param buffer: Tamaño del área a analizar (en grados).
+    :return: Terreno original, terreno afectado y coordenadas.
+    """
+    # Crear una cuadrícula de puntos
+    x = np.linspace(lon - buffer, lon + buffer, 100)
+    y = np.linspace(lat - buffer, lat + buffer, 100)
+    x, y = np.meshgrid(x, y)
+
+    # Simular terreno antes del derrumbe (elevación en metros)
+    z_original = 100 + 20 * np.sin(2 * np.pi * x) * np.cos(2 * np.pi * y)
+
+    # Simular terreno después del derrumbe
+    z_afectado = z_original.copy()
+    z_afectado[40:60, 40:60] -= 15  # Simular una caída de 15 metros en el centro
+
+    return x, y, z_original, z_afectado
+
+# Generar datos simulados
+x, y, z_original, z_afectado = simulate_terrain(latitude, longitude)
+
+# --- Visualización interactiva con Folium ---
+def create_interactive_map(lat, lon):
+    """
+    Crea un mapa interactivo que muestra la ubicación del kilómetro 34 y su entorno.
+    """
+    mapa = folium.Map(location=[lat, lon], zoom_start=14)
+    folium.Marker(
+        [lat, lon],
+        popup="Kilómetro 34 - Carretera Villa de Álvarez - Minatitlán",
+        tooltip="Derrumbe",
+        icon=folium.Icon(color="red", icon="exclamation-sign"),
+    ).add_to(mapa)
+    return mapa
+
+# --- Visualización del modelo 3D ---
+def plot_terrain_3d(x, y, z_original, z_afectado):
+    """
+    Genera un gráfico 3D del terreno antes y después del derrumbe.
+    """
+    fig = plt.figure(figsize=(12, 6))
+
+    # Subplot 1: Terreno original
+    ax1 = fig.add_subplot(121, projection='3d')
+    ax1.plot_surface(x, y, z_original, cmap='terrain', edgecolor='none')
+    ax1.set_title('Terreno Original')
+    ax1.set_xlabel('Longitud')
+    ax1.set_ylabel('Latitud')
+    ax1.set_zlabel('Elevación (m)')
+
+    # Subplot 2: Terreno afectado
+    ax2 = fig.add_subplot(122, projection='3d')
+    ax2.plot_surface(x, y, z_afectado, cmap='terrain', edgecolor='none')
+    ax2.set_title('Terreno Afectado')
+    ax2.set_xlabel('Longitud')
+    ax2.set_ylabel('Latitud')
+    ax2.set_zlabel('Elevación (m)')
+
+    plt.tight_layout()
+    plt.show()
+
+# --- Cálculo del volumen del derrumbe ---
+def calculate_volume(z_original, z_afectado, cell_size=10):
+    """
+    Calcula el volumen desplazado en el terreno.
+    :param z_original: Elevación original.
+    :param z_afectado: Elevación afectada.
+    :param cell_size: Tamaño de la celda (en metros).
+    :return: Volumen desplazado (en metros cúbicos).
+    """
+    diff = z_original - z_afectado
+    volume = np.sum(diff[diff > 0]) * cell_size**2  # Solo sumar diferencias positivas
+    return volume
+
+# Crear mapa interactivo
+mapa = create_interactive_map(latitude, longitude)
+mapa.save("mapa_interactivo.html")  # Guarda el mapa en un archivo HTML
+print("Mapa interactivo creado. Ábrelo con un navegador: 'mapa_interactivo.html'")
+
+# Graficar el terreno en 3D
+plot_terrain_3d(x, y, z_original, z_afectado)
+
+# Calcular y mostrar el volumen desplazado
+volumen = calculate_volume(z_original, z_afectado)
+print(f"Volumen de tierra desplazada: {volumen:.2f} metros cúbicos")
+
 ## Resultados
 Gráficos:
 Componentes descompuestas: tendencia, estacionalidad y residuo.
