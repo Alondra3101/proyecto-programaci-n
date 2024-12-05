@@ -224,6 +224,8 @@ print(f"Volumen de tierra desplazada: {volumen:.2f} metros cúbicos")
 
 ![image](https://github.com/user-attachments/assets/3258f757-6b7d-4749-8105-67118ce09d9c)
 
+
+
 ## Resultados
 Gráficos:
 Componentes descompuestas: tendencia, estacionalidad y residuo.
