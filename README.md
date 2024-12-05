@@ -2,8 +2,8 @@
 
 **Objetivo:** Desarrollar un sistema que analice datos históricos relacionados con precipitaciones y condiciones climáticas para identificar patrones y realizar predicciones sobre la ocurrencia de derrumbes en una zona crítica (Kilómetro 34 de la carretera Villa de Álvarez-Minatitlán).
 
-# MODELO ARIMA DEL KM 34 CARRETERA VILLA DE ÁLVAREZ-MINTAITLÁN
-**Autores:** Alondra Alonzo Peña
+# MODELO ARIMA DEL KM 34 CARRETERA VILLA DE ÁLVAREZ-MINATITLÁN
+**Autor:** Alondra Alonzo Peña
 ## Introducción
 Este proyecto tiene como propósito analizar series temporales de datos climáticos, específicamente precipitaciones, para identificar patrones que permitan predecir derrumbes en zonas críticas. Este tipo de análisis es crucial para la prevención de desastres y la planificación de medidas de mitigación, como en el caso del Kilómetro 34 de la carretera Villa de Álvarez-Minatitlán, donde los derrumbes representan un riesgo significativo para la infraestructura y la seguridad.
 
