@@ -122,7 +122,7 @@ plt.legend()
 plt.grid()
 plt.show()
 
-#CODIGO MODIFICADO 
+#CÓDIGO MODIFICADO 
 import geopandas as gpd
 import folium
 import matplotlib.pyplot as plt
@@ -222,6 +222,8 @@ plot_terrain_3d(x, y, z_original, z_afectado)
 # Calcular y mostrar el volumen desplazado
 volumen = calculate_volume(z_original, z_afectado)
 print(f"Volumen de tierra desplazada: {volumen:.2f} metros cúbicos")
+
+![image](https://github.com/user-attachments/assets/3258f757-6b7d-4749-8105-67118ce09d9c)
 
 ## Resultados
 Gráficos:
